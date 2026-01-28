@@ -5,10 +5,107 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+    provider = "prisma-client"
+    output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+    provider = "postgresql"
+}
+
+model Categories {
+    id        String      @id @default(uuid())
+    adminId   String
+    title     String      @db.VarChar(225)
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
+    medicines Medicines[]
+
+    @@index([adminId])
+}
+
+model Medicines {
+    id                String     @id @default(ulid())
+    categoryId        String
+    category          Categories @relation(fields: [categoryId], references: [id])
+    generic           String
+    sellerId          String
+    title             String     @db.VarChar(225)
+    manufacturer      String
+    price             Int
+    availableQuantity Int        @default(0)
+
+    details     String  @db.Text
+    isAvailable Boolean @default(true)
+    thumbnail   String
+
+    orderItems OrderItems[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([sellerId])
+    @@index([categoryId])
+}
+
+model Orders {
+    id         String @id @default(ulid())
+    customerId String
+
+    orderStatus     OrderStatus @default(PENDING)
+    shippingAddress String?
+
+    totalPrice Int          @default(0)
+    items      OrderItems[]
+    review     Reviews?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([customerId])
+}
+
+model OrderItems {
+    id String @id @default(ulid())
+
+    orderId String
+    order   Orders @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+    medicineId String
+    medicine   Medicines @relation(fields: [medicineId], references: [id], onDelete: Restrict)
+
+    quantity  Int
+    unitPrice Int
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([orderId, medicineId])
+    @@index([orderId])
+    @@index([medicineId])
+}
+
+model Reviews {
+    id String @id @default(uuid())
+
+    orderId String       @unique
+    order   Orders       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+    status  ReviewStatus @default(PUBLISHED)
+    comment String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([orderId])
+}
+
+enum ReviewStatus {
+    PUBLISHED
+    DRAFT
+}
+
+enum OrderStatus {
+    PENDING
+    RECEIVED
+    SHIPPED
+    DELIVERED
 }
