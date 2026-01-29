@@ -1,6 +1,6 @@
 import express from 'express'
 import { sellerRouter } from './modules/medicine/medicine.router'
-import { adminRouter } from './modules/category/category.router'
+import { categoryRouter } from './modules/category/category.router'
 import { toNodeHandler } from 'better-auth/node'
 import { auth } from './lib/auth'
 import cors from "cors"
@@ -16,7 +16,7 @@ app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use("/api/medicines", sellerRouter)
 
-app.use("/admin", adminRouter)
+app.use("/api/categories", categoryRouter)
 
 app.get("/", (req, res) => {
 	res.status(200).json({

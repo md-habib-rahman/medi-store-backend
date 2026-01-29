@@ -1,9 +1,13 @@
 import express from "express"
-import { sellerController } from "./medicine.controller";
+import { medicineController } from "./medicine.controller";
 import { auth, UserRole } from "../../middlewares/auth";
 
 const router = express.Router()
 
-router.post('/', auth(UserRole.SELLER), sellerController.createMedicine)
+router.get('/', medicineController.getAllMedicine)
+
+router.get('/:id', medicineController.getSingleMedicine)
+
+router.post('/', auth(UserRole.SELLER), medicineController.createMedicine)
 
 export const sellerRouter = router;
