@@ -1,12 +1,19 @@
 import { Request, Response } from "express"
-import { adminService } from "./admin.service"
+import { categoryService } from "./category.service"
 
 
 
 const createCategory = async (req: Request, res: Response) => {
 	try {
-		// console.log(req.body)
-		const result = await adminService.createCategory(req.body)
+
+		const user = req.user
+		if (!user) {
+			return res.status(403).json({
+				error: "Unauthorized!",
+
+			})
+		}
+		const result = await categoryService.createCategory(req.body, user.id as string)
 		console.log(result)
 		res.status(201).json(result)
 	} catch (err) {
@@ -18,6 +25,6 @@ const createCategory = async (req: Request, res: Response) => {
 }
 
 
-export const adminController = {
+export const categoryController = {
 	createCategory
 }
