@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import { auth as betterAuth } from '../lib/auth'
-import { success } from "better-auth";
 
 export enum UserRole {
 	CUSTOMER = "CUSTOMER",
@@ -56,7 +55,7 @@ export const auth = (...roles: UserRole[]) => {
 				message: "forbidden! You don't have permission to access this resources!"
 			})
 		}
-
 		next()
 	}
 }
+

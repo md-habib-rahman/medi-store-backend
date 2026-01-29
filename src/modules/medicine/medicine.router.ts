@@ -10,4 +10,4 @@ router.get('/:id', medicineController.getSingleMedicine)
 
 router.post('/', auth(UserRole.SELLER), medicineController.createMedicine)
 
-export const sellerRouter = router;
+export const medicineRouter = router;
