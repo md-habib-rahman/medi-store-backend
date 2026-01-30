@@ -1,80 +1,72 @@
-import { Request, Response } from "express"
-import { prisma } from "../../lib/prisma"
-import { Medicines } from "../../../generated/prisma/client";
+import { Request, Response } from "express";
+import { OrderRequest } from "../../types/order";
+import { orderService } from "./orders.services";
+import { success, User } from "better-auth";
+import { UserRole } from "../../middlewares/auth";
 
-interface OrderRequest {
-	shippingAddress: string;
-	items: {
-		medicineId: string;
-		quantity: number;
-	}[];
-}
-
-const createOrder = async (req: Request<{}, {}, OrderRequest>, res: Response) => {
-	const customerId = req.user?.id as string
-	const { shippingAddress, items } = req.body
-
+const getOrders = async (req: Request, res: Response) => {
+	const customerId = req.user!.id;
 	try {
-		const order = await prisma.$transaction(async (tx) => {
-			let orderPrice = 0 as number;
-
-			const medicineIds = items.map((i) => i.medicineId)
-
-			const medicines = await tx.medicines.findMany({
-				where: {
-					id:
-						{ in: medicineIds }
-				}
-			})
-
-			const orderItems = items.map((item) => {
-				const medicine: Medicines = medicines.find(
-					(m) => m.id === item.medicineId
-				);
-				orderPrice = orderPrice + (medicine.price * item.quantity);
-				return {
-					medicineId: medicine.id,
-					quantity: item.quantity,
-					unitPrice: medicine.price
-				}
-			})
-
-			const order = await tx.orders.create({
-				data: {
-					customerId,
-					shippingAddress,
-					totalPrice: orderPrice,
-					items: {
-						createMany: {
-							data: orderItems
-						}
-					}
-				}
-			})
-			await Promise.all(
-				orderItems.map(item => tx.medicines.update({
-					where: {
-						id: item.medicineId
-					},
-					data: {
-						availableQuantity: {
-							decrement: item.quantity
-						}
-					}
-				}))
-			)
-			return order
+		const order = await orderService.getOrders(customerId)
+		res.status(200).json({
+			success: true,
+			data: order
 		})
-		res.status(201).json(order)
 
 	} catch (err) {
 		res.status(400).json({
-			error: "Your order has been failed!",
-			details: err
-		})
+			success: false,
+			message: "Order fetching failed!",
+			error: err,
+		});
 	}
 }
 
+const getSingleOrder = async (req: Request, res: Response) => {
+	const userId: string = req.user?.id as string
+	const orderId: string = req.params.id as string
+	const userRole: string = req.user?.role as string
+	try {
+		const result = await orderService.getSingleOrder(userId, orderId, userRole)
+		res.status(200).json({
+			success: true,
+			data: result
+		})
+	} catch (err: any) {
+		res.status(400).json({
+			success: false,
+			message: "Fetching order failed!",
+			error: err.message,
+		});
+	}
+
+}
+
+const createOrder = async (
+	req: Request<{}, {}, OrderRequest>,
+	res: Response
+) => {
+	try {
+		const customerId = req.user!.id;
+
+		const order = await orderService.createOrder(customerId, req.body);
+
+		res.status(201).json({
+			success: true,
+			data: order,
+		});
+	} catch (err: any) {
+		res.status(400).json({
+			success: false,
+			message: "Your order has been failed!",
+			error: err.message,
+		});
+	}
+};
+
+
 export const orderController = {
-	createOrder
+	createOrder,
+	getOrders,
+	getSingleOrder
 }
