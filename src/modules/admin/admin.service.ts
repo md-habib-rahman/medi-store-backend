@@ -16,6 +16,7 @@ const updateUserStatus = async (userId: string, status: UserStatus) => {
 			status: status
 		}
 	})
+	return update
 }
 
 export const adminService = {
