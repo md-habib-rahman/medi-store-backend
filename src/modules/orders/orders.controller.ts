@@ -4,23 +4,7 @@ import { orderService } from "./orders.services";
 import { success, User } from "better-auth";
 import { UserRole } from "../../middlewares/auth";
 
-const getOrders = async (req: Request, res: Response) => {
-	const customerId = req.user!.id;
-	try {
-		const order = await orderService.getOrders(customerId)
-		res.status(200).json({
-			success: true,
-			data: order
-		})
 
-	} catch (err) {
-		res.status(400).json({
-			success: false,
-			message: "Order fetching failed!",
-			error: err,
-		});
-	}
-}
 
 const getSingleOrder = async (req: Request, res: Response) => {
 	const userId: string = req.user?.id as string
@@ -66,7 +50,6 @@ const createOrder = async (
 
 
 export const orderController = {
-	createOrder,
-	getOrders,
+	createOrder,	
 	getSingleOrder
 }

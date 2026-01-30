@@ -3,31 +3,7 @@ import { Medicines, OrderStatus } from "../../../generated/prisma/client";
 import { OrderRequest } from "../../types/order";
 import { UserRole } from "../../middlewares/auth";
 
-const getOrders = async (customerId: string) => {
-	const result = await prisma.orders.findMany({
-		where: {
-			customerId, orderStatus: {
-				not: OrderStatus.DELIVERED
-			}
-		},
-		orderBy: { createdAt: 'desc' },
-		include: {
-			items: {
-				include: {
-					medicine: {
-						select: {
-							id: true,
-							title: true,
-							thumbnail: true
-						}
-					}
-				}
-			}
-		}
-	})
 
-	return result
-}
 
 const getSingleOrder = async (userId: string, orderId: string, userRole: string) => {
 
@@ -117,6 +93,6 @@ const createOrder = async (
 
 export const orderService = {
 	createOrder,
-	getOrders,
+	
 	getSingleOrder
 }

@@ -1,0 +1,17 @@
+import express from 'express'
+import { auth, UserRole } from '../../middlewares/auth'
+import { sellerController } from './seller.controller'
+
+const router = express.Router()
+
+router.post('/medicines', auth(UserRole.SELLER), sellerController.createMedicine)
+
+router.put('/medicines', auth(UserRole.SELLER), sellerController.updateMedicine)
+
+router.delete('/medicines/:id', auth(UserRole.SELLER), sellerController.deleteMedicine)
+
+router.get('/orders', auth(UserRole.SELLER), sellerController.getOrders)
+
+router.patch('/orders/:id', auth(UserRole.SELLER), sellerController.updateOrderStatus)
+
+export const sellerRouter = router

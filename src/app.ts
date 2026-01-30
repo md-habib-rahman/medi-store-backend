@@ -6,6 +6,7 @@ import { auth } from './lib/auth'
 import cors from "cors"
 import { UserRouter } from './modules/user/user.router'
 import { orderRouter } from './modules/orders/order.router'
+import { sellerRouter } from './modules/seller/seller.router'
 
 const app = express()
 app.use(cors({
@@ -20,7 +21,7 @@ app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use('/api/orders', orderRouter)
 
-app.use('/api/seller', orderRouter)
+app.use('/api/seller/', sellerRouter)
 
 app.use("/api/medicines", medicineRouter)
 
