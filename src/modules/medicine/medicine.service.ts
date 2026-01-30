@@ -1,5 +1,6 @@
 import { Medicines } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
+import { UpdateMedicine } from "../../types/order";
 
 const getSingleMedicine = async (medicineId: string) => {
 	const medicine = await prisma.medicines.findUnique({
@@ -8,6 +9,27 @@ const getSingleMedicine = async (medicineId: string) => {
 		}
 	})
 	return medicine
+}
+
+const updateMedicine = async (medicineId: string, userId: string, payload: UpdateMedicine) => {
+	const medicine = await prisma.medicines.findFirst({
+		where: {
+			id: medicineId,
+			sellerId: userId
+		}
+	})
+
+	if (!medicine) {
+		throw new Error("Medicine not found in DB!")
+	}
+
+	const updateMedicine = await prisma.medicines.update({
+		where: {
+			id: medicineId,
+		},
+		data: { ...payload }
+	})
+	return updateMedicine;
 }
 
 const getAllMedicine = async () => {
@@ -25,8 +47,30 @@ const createMedicine = async (data: Omit<Medicines, "id" | "createdAt" | "update
 	return result
 }
 
+const deleteMedicine = async (medicineId: string, userId: string) => {
+	const medicine = await prisma.medicines.findFirst({
+		where: {
+			id: medicineId,
+			sellerId: userId
+		}
+	})
+
+	if (!medicine) {
+		throw new Error("Medicine not found in DB!")
+	}
+
+	const result = await prisma.medicines.delete({
+		where: {
+			id: medicineId
+		}
+	})
+
+	return result
+}
 export const medicineService = {
 	createMedicine,
 	getAllMedicine,
-	getSingleMedicine
+	getSingleMedicine,
+	updateMedicine,
+	deleteMedicine
 }

@@ -52,8 +52,50 @@ const createMedicine = async (req: Request, res: Response) => {
 	}
 }
 
+const updateMedicine = async (req: Request, res: Response) => {
+	const userId = req.user?.id as string
+	const medicineId = req.params.id as string
+
+	try {
+		const result = await medicineService.updateMedicine(medicineId, userId, req.body)
+
+		res.status(200).json({
+			success: true,
+			data: result
+		})
+
+	} catch (err) {
+		res.status(400).json({
+			error: "Medicine adding failed with error",
+			details: err
+		})
+	}
+}
+
+const deleteMedicine = async (req: Request, res: Response) => {
+	const userId = req.user?.id as string
+	const medicineId = req.params.id as string
+
+	try {
+		const result = await medicineService.deleteMedicine(medicineId,userId)
+
+		res.status(200).json({
+			success: true,
+			data: result
+		})
+
+	} catch (err) {
+		res.status(400).json({
+			error: "Medicine adding failed with error",
+			details: err
+		})
+	}
+}
+
 export const medicineController = {
 	createMedicine,
 	getAllMedicine,
-	getSingleMedicine
+	getSingleMedicine,
+	updateMedicine,
+	deleteMedicine
 }
