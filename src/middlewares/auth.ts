@@ -7,6 +7,11 @@ export enum UserRole {
 	SELLER = "SELLER"
 }
 
+export enum UserStatus {
+	ACTIVE = "ACTIVE",
+	INACTIVE = "INACTIVE"
+}
+
 declare global {
 	namespace Express {
 		interface Request {
@@ -15,6 +20,7 @@ declare global {
 				email: string,
 				name: string,
 				role: string,
+				status: string,
 				emailVerified: boolean;
 			}
 		}
@@ -46,7 +52,15 @@ export const auth = (...roles: UserRole[]) => {
 			email: session.user.email,
 			name: session.user.name,
 			role: session.user.role as string,
+			status: session.user.status as string,
 			emailVerified: session.user.emailVerified
+		}
+
+		if (req.user.status === "INACTIVE") {
+			return res.status(403).json({
+				success: false,
+				message: `Account is ${req.user.status}. Access denied.`,
+			});
 		}
 
 		if (roles.length && !roles.includes(req.user.role as UserRole)) {

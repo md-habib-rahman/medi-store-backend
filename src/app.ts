@@ -7,6 +7,7 @@ import cors from "cors"
 import { UserRouter } from './modules/user/user.router'
 import { orderRouter } from './modules/orders/order.router'
 import { sellerRouter } from './modules/seller/seller.router'
+import { adminRouter } from './modules/admin/admin.router'
 
 const app = express()
 app.use(cors({
@@ -26,6 +27,8 @@ app.use('/api/seller/', sellerRouter)
 app.use("/api/medicines", medicineRouter)
 
 app.use("/api/categories", categoryRouter)
+
+app.use("/api/admin", adminRouter)
 
 app.get("/", (req, res) => {
 	res.status(200).json({
