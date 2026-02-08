@@ -3,6 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 // If your Prisma file is located elsewhere, you can change the path
 import { prisma } from "./prisma";
 import nodemailer from 'nodemailer'
+import { jwt } from "better-auth/plugins";
 
 const transporter = nodemailer.createTransport({
 	host: "smtp.gmail.com",
@@ -18,6 +19,14 @@ export const auth = betterAuth({
 	database: prismaAdapter(prisma, {
 		provider: "postgresql", // or "mysql", "postgresql", ...etc
 	}),
+	plugins: [
+		jwt({
+			jwt: {
+				expirationTime: "7d", // Set your preferred expiry
+			}
+		})
+	],
+
 	trustedOrigins: [process.env.APP_URL!],
 	user: {
 		additionalFields: {
@@ -38,7 +47,7 @@ export const auth = betterAuth({
 		autoSignIn: false,
 		requireEmailVerification: true
 	},
-	
+
 	emailVerification: {
 		sendOnSignUp: true,
 		autoSignInAfterVerification: true,

@@ -30,6 +30,7 @@ model Medicines {
     category          Categories   @relation(fields: [categoryId], references: [id])
     generic           String
     sellerId          String
+    seller            User         @relation(fields: [sellerId], references: [id])
     title             String       @db.VarChar(225)
     manufacturer      String
     price             Int
@@ -103,17 +104,18 @@ enum OrderStatus {
 }
 
 model User {
-    id            String    @id
+    id            String      @id
     name          String
     email         String
-    emailVerified Boolean   @default(false)
+    emailVerified Boolean     @default(false)
     image         String?
-    createdAt     DateTime  @default(now())
-    updatedAt     DateTime  @updatedAt
+    createdAt     DateTime    @default(now())
+    updatedAt     DateTime    @updatedAt
     sessions      Session[]
     accounts      Account[]
-    status        String?   @default("ACTIVE")
-    role          String?   @default("CUSTOMER")
+    status        String?     @default("ACTIVE")
+    role          String?     @default("CUSTOMER")
+    medicines     Medicines[]
 
     @@unique([email])
     @@map("user")
@@ -165,4 +167,14 @@ model Verification {
 
     @@index([identifier])
     @@map("verification")
+}
+
+model Jwks {
+    id         String    @id
+    publicKey  String
+    privateKey String
+    createdAt  DateTime
+    expiresAt  DateTime?
+
+    @@map("jwks")
 }

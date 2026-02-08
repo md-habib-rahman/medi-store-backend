@@ -17,3 +17,9 @@ export interface UpdateMedicine {
 	manufacturer?: string;
 	thumbnail?: string;
 }
+
+export interface WhereCondition {
+	id?: string,
+	sellerId?: string,
+	categoryId?: string,
+}

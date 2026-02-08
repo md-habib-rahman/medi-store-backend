@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { auth as betterAuth } from '../lib/auth'
+import { role } from "better-auth/plugins";
 
 export enum UserRole {
 	CUSTOMER = "CUSTOMER",
@@ -28,10 +29,14 @@ declare global {
 }
 
 export const auth = (...roles: UserRole[]) => {
+
 	return async (req: Request, res: Response, next: NextFunction) => {
+		//console.log(req.headers)
 		const session = await betterAuth.api.getSession({
 			headers: req.headers as any
 		})
+
+		// console.log(req.headers)
 
 		if (!session) {
 			return res.status(401).json({
@@ -62,11 +67,12 @@ export const auth = (...roles: UserRole[]) => {
 				message: `Account is ${req.user.status}. Access denied.`,
 			});
 		}
+		console.log(roles)
+		if (!roles.includes(req.user.role as UserRole)) {
 
-		if (roles.length && !roles.includes(req.user.role as UserRole)) {
 			return res.status(403).json({
 				success: false,
-				message: "forbidden! You don't have permission to access this resources!"
+				message: "forbidden! from here You don't have permission to access this resources!"
 			})
 		}
 		next()

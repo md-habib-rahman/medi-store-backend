@@ -10,9 +10,13 @@ const createMedicine = async (req: Request, res: Response) => {
 		})
 	}
 	try {
+		console.log(req.user,req.headers)
 		console.log(req.body)
 		const result = await sellerService.createMedicine(req.body, user.id as string)
-		res.status(201).json(result)
+		res.status(201).json({
+			success: true,
+			data: result
+		})
 	} catch (err) {
 		res.status(400).json({
 			error: "Medicine adding failed with error",
