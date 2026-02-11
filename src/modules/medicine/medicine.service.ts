@@ -14,9 +14,9 @@ import { UpdateMedicine, WhereCondition } from "../../types/order";
 
 //public get all medicine api
 const getAllMedicine = async ({
-	page, limit, skip, sellerId, categoryId, sortBy, sortOrder, id
+	page, limit, skip, sellerId, categoryId, sortBy, sortOrder, id, manufacturer, maxprice
 }: {
-	page: number, limit: number, skip: number, sellerId?: string, categoryId?: string, sortBy?: string | undefined, sortOrder?: string | undefined, id?: string | undefined
+	page: number, limit: number, skip: number, sellerId?: string, categoryId?: string, sortBy?: string | undefined, sortOrder?: string | undefined, id?: string | undefined, manufacturer?: string | undefined, maxprice?: number | undefined
 }) => {
 
 	let where: WhereCondition = {}
@@ -26,17 +26,18 @@ const getAllMedicine = async ({
 	if (categoryId) {
 		where.categoryId = categoryId
 	}
+	if (manufacturer) {
+		where.manufacturer = manufacturer
+	}
 	if (id) {
 		where.id = id;
 	}
-	// let orderBy: Prisma.MedicinesOrderByWithRelationInput = {
-	// 	createdAt: "desc",
-	// }
-	// if (sortBy && sortOrder) {
-	// 	orderBy = {
-	// 		[sortBy]: sortOrder
-	// 	} as Prisma.MedicinesOrderByWithRelationInput
-	// }
+	if (maxprice) {
+		where.price = {
+			lte: maxprice
+		}
+	}
+	// console.log(where)
 
 	const allMedicine = await prisma.medicines.findMany({
 		take: limit,
@@ -57,13 +58,24 @@ const getAllMedicine = async ({
 		}
 	})
 
-	
-	return allMedicine;
+	const total = await prisma.medicines.count({
+		where
+	})
+
+	return {
+		data: allMedicine,
+		meta: {
+			total,
+			page,
+			limit,
+			totalPages: Math.ceil(total / limit)
+		}
+	}
 }
 
 export const medicineService = {
 
 	getAllMedicine,
-	
+
 
 }

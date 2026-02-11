@@ -5,176 +5,179 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-    provider = "prisma-client"
-    output   = "../generated/prisma"
+  provider = "prisma-client"
+  output   = "../generated/prisma"
 }
 
 datasource db {
-    provider = "postgresql"
+  provider = "postgresql"
 }
 
 model Categories {
-    id        String      @id @default(uuid())
-    adminId   String
-    title     String      @db.VarChar(225)
-    createdAt DateTime    @default(now())
-    updatedAt DateTime    @updatedAt
-    medicines Medicines[]
+  id        String      @id @default(uuid())
+  adminId   String
+  title     String      @db.VarChar(225)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  medicines Medicines[]
 
-    @@index([adminId])
+  @@index([adminId])
 }
 
 model Medicines {
-    id                String       @id @default(ulid())
-    categoryId        String
-    category          Categories   @relation(fields: [categoryId], references: [id])
-    generic           String
-    sellerId          String
-    seller            User         @relation(fields: [sellerId], references: [id])
-    title             String       @db.VarChar(225)
-    manufacturer      String
-    price             Int
-    availableQuantity Int          @default(0)
-    details           String       @db.Text
-    isAvailable       Boolean      @default(true)
-    thumbnail         String
-    orderItems        OrderItems[]
-    createdAt         DateTime     @default(now())
-    updatedAt         DateTime     @updatedAt
+  id                String       @id @default(ulid())
+  categoryId        String
+  category          Categories   @relation(fields: [categoryId], references: [id])
+  generic           String
+  sellerId          String
+  seller            User         @relation(fields: [sellerId], references: [id])
+  title             String       @db.VarChar(225)
+  manufacturer      String
+  price             Int
+  availableQuantity Int          @default(0)
+  details           String       @db.Text
+  isAvailable       Boolean      @default(true)
+  thumbnail         String
+  orderItems        OrderItems[]
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
 
-    @@index([sellerId])
-    @@index([categoryId])
+  @@index([sellerId])
+  @@index([categoryId])
 }
 
 model Orders {
-    id              String       @id @default(ulid())
-    customerId      String
-    sellerId        String
-    orderStatus     OrderStatus  @default(PENDING)
-    shippingAddress String?
-    totalPrice      Int          @default(0)
-    items           OrderItems[]
-    review          Reviews?
-    createdAt       DateTime     @default(now())
-    updatedAt       DateTime     @updatedAt
+  id              String       @id @default(ulid())
+  customerId      String
+  sellerId        String
+  orderStatus     OrderStatus  @default(PENDING)
+  shippingAddress String?
+  totalPrice      Int          @default(0)
+  items           OrderItems[]
+  review          Reviews?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
 
-    @@index([customerId])
+  @@index([customerId])
 }
 
 model OrderItems {
-    id         String    @id @default(ulid())
-    orderId    String
-    order      Orders    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-    medicineId String
-    medicine   Medicines @relation(fields: [medicineId], references: [id], onDelete: Restrict)
-    quantity   Int
-    unitPrice  Int
-    createdAt  DateTime  @default(now())
-    updatedAt  DateTime  @updatedAt
+  id         String    @id @default(ulid())
+  orderId    String
+  order      Orders    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  medicineId String
+  medicine   Medicines @relation(fields: [medicineId], references: [id], onDelete: Restrict)
+  quantity   Int
+  unitPrice  Int
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
-    @@unique([orderId, medicineId])
-    @@index([orderId])
-    @@index([medicineId])
+  @@unique([orderId, medicineId])
+  @@index([orderId])
+  @@index([medicineId])
 }
 
 model Reviews {
-    id String @id @default(uuid())
+  id String @id @default(uuid())
 
-    orderId String       @unique
-    order   Orders       @relation(fields: [orderId], references: [id], onDelete: Cascade)
-    status  ReviewStatus @default(PUBLISHED)
-    comment String
+  orderId String       @unique
+  order   Orders       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status  ReviewStatus @default(PUBLISHED)
+  comment String
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@index([orderId])
+  @@index([orderId])
 }
 
 enum ReviewStatus {
-    PUBLISHED
-    DRAFT
+  PUBLISHED
+  DRAFT
 }
 
 enum OrderStatus {
-    PENDING
-    RECEIVED
-    SHIPPED
-    DELIVERED
+  PENDING
+  RECEIVED
+  SHIPPED
+  DELIVERED
 }
 
 model User {
-    id            String      @id
-    name          String
-    email         String
-    emailVerified Boolean     @default(false)
-    image         String?
-    createdAt     DateTime    @default(now())
-    updatedAt     DateTime    @updatedAt
-    sessions      Session[]
-    accounts      Account[]
-    status        String?     @default("ACTIVE")
-    role          String?     @default("CUSTOMER")
-    medicines     Medicines[]
+  id            String      @id
+  name          String
+  email         String
+  emailVerified Boolean     @default(false)
+  image         String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+  status        String?     @default("ACTIVE")
+  role          String?     @default("CUSTOMER")
+  medicines     Medicines[]
 
-    @@unique([email])
-    @@map("user")
+  phone   String?
+  address String?
+
+  @@unique([email])
+  @@map("user")
 }
 
 model Session {
-    id        String   @id
-    expiresAt DateTime
-    token     String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    ipAddress String?
-    userAgent String?
-    userId    String
-    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@unique([token])
-    @@index([userId])
-    @@map("session")
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
 }
 
 model Account {
-    id                    String    @id
-    accountId             String
-    providerId            String
-    userId                String
-    user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-    accessToken           String?
-    refreshToken          String?
-    idToken               String?
-    accessTokenExpiresAt  DateTime?
-    refreshTokenExpiresAt DateTime?
-    scope                 String?
-    password              String?
-    createdAt             DateTime  @default(now())
-    updatedAt             DateTime  @updatedAt
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
-    @@index([userId])
-    @@map("account")
+  @@index([userId])
+  @@map("account")
 }
 
 model Verification {
-    id         String   @id
-    identifier String
-    value      String
-    expiresAt  DateTime
-    createdAt  DateTime @default(now())
-    updatedAt  DateTime @updatedAt
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-    @@index([identifier])
-    @@map("verification")
+  @@index([identifier])
+  @@map("verification")
 }
 
 model Jwks {
-    id         String    @id
-    publicKey  String
-    privateKey String
-    createdAt  DateTime
-    expiresAt  DateTime?
+  id         String    @id
+  publicKey  String
+  privateKey String
+  createdAt  DateTime
+  expiresAt  DateTime?
 
-    @@map("jwks")
+  @@map("jwks")
 }

@@ -1,7 +1,9 @@
 
+import { AsyncLocalStorage } from "node:async_hooks";
 import { Medicines, OrderStatus } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 import { UpdateMedicine } from "../../types/order";
+import { stockPayload } from "../../types/medicine";
 
 
 const createMedicine = async (data: Omit<Medicines, "id" | "createdAt" | "updatedAt" | "sellerId">, userId: string) => {
@@ -83,7 +85,7 @@ const getOrders = async (sellerId: string) => {
 }
 
 
-const updateOrderStatus = async (orderId: string, status:OrderStatus, userId: string) => {
+const updateOrderStatus = async (orderId: string, status: OrderStatus, userId: string) => {
 	// console.log({ orderId, status, userId })
 	const order = await prisma.orders.findFirst({
 		where: {
@@ -106,10 +108,32 @@ const updateOrderStatus = async (orderId: string, status:OrderStatus, userId: st
 	// return result
 }
 
+const stockeUpdate = async (medicineId: string, userId: string, quantity: number) => {
+
+	const medicine = await prisma.medicines.findFirst({
+		where: {
+			id: medicineId,
+			sellerId: userId
+		}
+	})
+
+	if (!medicine) {
+		throw new Error("Order not found!")
+	}
+
+	return await prisma.medicines.update({
+		where: { id: medicineId },
+		data: {
+			availableQuantity: quantity
+		}
+	})
+}
+
 export const sellerService = {
 	createMedicine,
 	updateMedicine,
 	deleteMedicine,
 	getOrders,
-	updateOrderStatus
+	updateOrderStatus,
+	stockeUpdate
 }

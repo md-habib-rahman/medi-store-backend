@@ -9,6 +9,7 @@ import { orderRouter } from './modules/orders/order.router'
 import { sellerRouter } from './modules/seller/seller.router'
 import { adminRouter } from './modules/admin/admin.router'
 import { publicROuter } from './modules/public/public.router'
+import { logger } from './middlewares/logger'
 
 const app = express()
 app.use(cors({
@@ -18,6 +19,8 @@ app.use(cors({
 app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use(express.json())
+
+app.use(logger);
 
 app.use('/api/auth/me', UserRouter)
 
@@ -31,7 +34,7 @@ app.use("/api/categories", categoryRouter)
 
 app.use("/api/admin", adminRouter)
 
-app.use("/api/manufacturer", publicROuter)
+app.use("/api", publicROuter)
 
 app.get("/", (req, res) => {
 	res.status(200).json({

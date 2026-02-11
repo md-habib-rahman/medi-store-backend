@@ -13,12 +13,9 @@ const getAllCategory = async (id: string, page: number, limit: number, skip: num
 	})
 
 	const total = await prisma.categories.count({
-
 		where: {
 			id
 		},
-
-
 	})
 
 	return {
@@ -30,7 +27,6 @@ const getAllCategory = async (id: string, page: number, limit: number, skip: num
 			totalPages: Math.ceil(total / limit)
 		}
 	}
-
 }
 
 const createCategory = async (data: Omit<Categories, "id" | "createdAt" | "updatedAt" | "adminId">, userId: string) => {

@@ -22,4 +22,8 @@ export interface WhereCondition {
 	id?: string,
 	sellerId?: string,
 	categoryId?: string,
+	manufacturer?: string,
+	price?: {
+		lte: number
+	}
 }

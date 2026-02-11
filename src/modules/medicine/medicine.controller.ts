@@ -23,13 +23,19 @@ const getAllMedicine = async (req: Request, res: Response) => {
 
 		const { page, limit, skip, sortBy, sortOrder } = paginationHelper(req.query)
 
+		const maxprice = Number(req?.query?.maxprice)
+
 		const sellerId = req?.query?.sellerId as string
 
 		const categoryId = req.query.categoryId as string
 
+		const manufacturer = req.query.manufacturer as string
+
 		const id = req.query.id as string | undefined
 
-		const result = await medicineService.getAllMedicine({ page, limit, skip, sellerId, categoryId, sortBy, sortOrder, id })
+		// console.log({ sellerId })
+
+		const result = await medicineService.getAllMedicine({ page, limit, skip, sellerId, categoryId, sortBy, sortOrder, id, manufacturer, maxprice })
 		res.status(200).json({
 			success: true,
 			data: result

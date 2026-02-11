@@ -67,6 +67,7 @@ export const auth = (...roles: UserRole[]) => {
 				message: `Account is ${req.user.status}. Access denied.`,
 			});
 		}
+		
 		console.log(roles)
 		if (!roles.includes(req.user.role as UserRole)) {
 

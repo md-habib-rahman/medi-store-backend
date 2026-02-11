@@ -10,8 +10,8 @@ const createMedicine = async (req: Request, res: Response) => {
 		})
 	}
 	try {
-		console.log(req.user,req.headers)
-		console.log(req.body)
+		// console.log(req.user, req.headers)
+		// console.log(req.body)
 		const result = await sellerService.createMedicine(req.body, user.id as string)
 		res.status(201).json({
 			success: true,
@@ -31,6 +31,29 @@ const updateMedicine = async (req: Request, res: Response) => {
 
 	try {
 		const result = await sellerService.updateMedicine(medicineId, userId, req.body)
+
+		res.status(200).json({
+			success: true,
+			data: result
+		})
+
+	} catch (err) {
+		res.status(400).json({
+			error: "Medicine adding failed with error",
+			details: err
+		})
+	}
+}
+
+const stockUpdate = async (req: Request, res: Response) => {
+	const userId = req.user?.id as string
+	const medicineId = req.params.id as string
+	console.log(req.body)
+
+	const quantity = req.body.quantity as number | undefined
+
+	try {
+		const result = await sellerService.stockeUpdate(medicineId, userId, quantity as number)
 
 		res.status(200).json({
 			success: true,
@@ -108,5 +131,6 @@ export const sellerController = {
 	updateMedicine,
 	deleteMedicine,
 	getOrders,
-	updateOrderStatus
+	updateOrderStatus,
+	stockUpdate
 }
