@@ -22,7 +22,7 @@ app.use(express.json())
 
 app.use(logger);
 
-app.use('/api/auth/me', UserRouter)
+app.use('/api/user', UserRouter)
 
 app.use('/api/orders', orderRouter)
 
