@@ -1,6 +1,6 @@
 import { prisma } from "../../lib/prisma";
-import { Medicines, OrderStatus } from "../../../generated/prisma/client";
-import { OrderRequest } from "../../types/order";
+import { Medicines } from "../../../generated/prisma/client";
+import { OrderRequest, OrderWhereCondition } from "../../types/order";
 import { UserRole } from "../../middlewares/auth";
 
 
@@ -29,7 +29,7 @@ const createOrder = async (
 	customerId: string,
 	payload: OrderRequest
 ) => {
-	const { shippingAddress, items } = payload;
+	const { shippingAddress, items, deliveryFee } = payload;
 
 	return prisma.$transaction(async (tx) => {
 		let orderPrice = 0;
@@ -59,6 +59,8 @@ const createOrder = async (
 
 			};
 		});
+
+		orderPrice += deliveryFee
 
 		const order = await tx.orders.create({
 			data: {
@@ -91,8 +93,59 @@ const createOrder = async (
 	});
 };
 
+const getOrders = async ({
+	page, limit, skip, sellerId, customerId, sortBy, sortOrder, orderId }: {
+		customerId: string | undefined,
+		page: number, limit: number, skip: number, sellerId?: string, sortBy?: string | undefined, sortOrder?: string | undefined, orderId?: string | undefined
+	}) => {
+	let where: OrderWhereCondition = {}
+	if (sellerId) {
+		where.sellerId = sellerId
+	}
+	if (customerId) {
+		where.customerId = customerId
+	}
+	if (orderId) {
+		where.orderId = orderId
+	}
+
+	const result = await prisma.orders.findMany({
+		take: limit,
+		skip,
+		where,
+		orderBy: sortBy && sortOrder ? { [sortBy]: sortOrder } : { createdAt: "desc" },
+		include: {
+			items: {
+				include: {
+					medicine: {
+						select: {
+							id: true,
+							title: true,
+							thumbnail: true
+						}
+					}
+				}
+			}
+		}
+	})
+
+	const total = await prisma.orders.count({
+		where
+	})
+
+	return {
+		data: result,
+		meta: {
+			total,
+			page,
+			limit,
+			totalPages: Math.ceil(total / limit)
+		}
+	}
+}
+
 export const orderService = {
 	createOrder,
-	
+	getOrders,
 	getSingleOrder
 }

@@ -12,7 +12,7 @@ router.patch('/medicines/:id', auth(UserRole.SELLER), sellerController.stockUpda
 
 router.delete('/medicines/:id', auth(UserRole.SELLER), sellerController.deleteMedicine)
 
-router.get('/orders', auth(UserRole.SELLER), sellerController.getOrders)
+
 
 router.patch('/orders/:id', auth(UserRole.SELLER), sellerController.updateOrderStatus)
 

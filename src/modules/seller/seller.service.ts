@@ -58,31 +58,7 @@ const deleteMedicine = async (medicineId: string, userId: string) => {
 	return result
 }
 
-const getOrders = async (sellerId: string) => {
-	const result = await prisma.orders.findMany({
-		where: {
-			sellerId, orderStatus: {
-				not: OrderStatus.DELIVERED
-			}
-		},
-		orderBy: { createdAt: 'desc' },
-		include: {
-			items: {
-				include: {
-					medicine: {
-						select: {
-							id: true,
-							title: true,
-							thumbnail: true
-						}
-					}
-				}
-			}
-		}
-	})
 
-	return result
-}
 
 
 const updateOrderStatus = async (orderId: string, status: OrderStatus, userId: string) => {
@@ -133,7 +109,7 @@ export const sellerService = {
 	createMedicine,
 	updateMedicine,
 	deleteMedicine,
-	getOrders,
+
 	updateOrderStatus,
 	stockeUpdate
 }

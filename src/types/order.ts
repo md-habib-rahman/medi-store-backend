@@ -1,5 +1,6 @@
 export interface OrderRequest {
 	shippingAddress: string;
+	deliveryFee: number;
 	items: {
 		medicineId: string;
 		quantity: number;
@@ -26,4 +27,9 @@ export interface WhereCondition {
 	price?: {
 		lte: number
 	}
+}
+export interface OrderWhereCondition {
+	orderId?: string,
+	sellerId?: string,
+	customerId?: string,
 }

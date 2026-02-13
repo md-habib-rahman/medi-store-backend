@@ -88,23 +88,7 @@ const deleteMedicine = async (req: Request, res: Response) => {
 	}
 }
 
-const getOrders = async (req: Request, res: Response) => {
-	const sellerId = req.user!.id;
-	try {
-		const order = await sellerService.getOrders(sellerId)
-		res.status(200).json({
-			success: true,
-			data: order
-		})
 
-	} catch (err) {
-		res.status(400).json({
-			success: false,
-			message: "Order fetching failed!",
-			error: err,
-		});
-	}
-}
 
 const updateOrderStatus = async (req: Request, res: Response) => {
 	const { id } = req.params
@@ -130,7 +114,7 @@ export const sellerController = {
 	createMedicine,
 	updateMedicine,
 	deleteMedicine,
-	getOrders,
+	
 	updateOrderStatus,
 	stockUpdate
 }
