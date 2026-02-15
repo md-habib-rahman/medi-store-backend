@@ -17,17 +17,30 @@ const transporter = nodemailer.createTransport({
 
 export const auth = betterAuth({
 	database: prismaAdapter(prisma, {
-		provider: "postgresql", // or "mysql", "postgresql", ...etc
+		provider: "postgresql", 
 	}),
 	plugins: [
 		jwt({
 			jwt: {
-				expirationTime: "7d", // Set your preferred expiry
-			}
+				expirationTime: "7d", 
+						}
 		})
 	],
+	session: {
+		cookieCache: {
+			enabled: true,
+			maxAge: 5 * 60,
+		},
+	},
+	advanced: {
+		cookiePrefix: "better-auth",
+		useSecureCookies: process.env.NODE_ENV === "production", crossSubDomainCookies: {
+			enabled: false,
+		},
+		disableCSRFCheck: true,
+	},
 
-	trustedOrigins: [process.env.APP_URL!],
+	trustedOrigins: [process.env.APP_URL!, process.env.PROD_APP_URL!, "https://medi-store-client-gamma.vercel.app/", "http://localhost:3000/"],
 	user: {
 		additionalFields: {
 			role: {
