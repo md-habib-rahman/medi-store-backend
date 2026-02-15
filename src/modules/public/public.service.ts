@@ -14,8 +14,9 @@ const getManufacturers = async () => {
 	})
 	return res
 }
-const getSellerInfo = async ({ sellerId }: { sellerId: string }) => {
-	console.log(sellerId)
+const getSellerInfo = async ({ sellerId }: { sellerId: string | undefined }) => {
+	//console.log(sellerId)
+if(!sellerId) throw new Error("Seller ID is required")
 	const res = await prisma.user.findUnique({
 		where: {
 			id: sellerId

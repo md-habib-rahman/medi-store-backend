@@ -3,7 +3,7 @@ import { sellerService } from "./seller.service";
 import { OrderStatus } from "../../../generated/prisma/enums";
 
 const createMedicine = async (req: Request, res: Response) => {
-	const user = req.user
+	const user = req.user!
 	if (!user) {
 		return res.status(403).json({
 			error: "Unauthorized!",
@@ -94,6 +94,7 @@ const updateOrderStatus = async (req: Request, res: Response) => {
 	const { id } = req.params
 	const orderStatus = req.body.orderStatus as OrderStatus
 	const userId = req.user!.id
+	console.log({ id, orderStatus, userId })
 	try {
 		const result = await sellerService.updateOrderStatus(id as string, orderStatus, userId)
 
@@ -114,7 +115,7 @@ export const sellerController = {
 	createMedicine,
 	updateMedicine,
 	deleteMedicine,
-	
+
 	updateOrderStatus,
 	stockUpdate
 }

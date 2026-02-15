@@ -67,13 +67,13 @@ export const auth = (...roles: UserRole[]) => {
 				message: `Account is ${req.user.status}. Access denied.`,
 			});
 		}
-		
-		console.log(roles)
-		if (!roles.includes(req.user.role as UserRole)) {
+
+		// console.log("role: ",req.user.role)
+		if (roles.length && !roles.includes(req.user.role as UserRole)) {
 
 			return res.status(403).json({
 				success: false,
-				message: "forbidden! from here You don't have permission to access this resources!"
+				message: "forbidden! You don't have permission to access this resources!"
 			})
 		}
 		next()

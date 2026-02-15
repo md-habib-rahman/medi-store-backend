@@ -3,7 +3,7 @@ import { userService } from "./user.service";
 
 
 const getCurrentUser = async (req: Request, res: Response) => {
-	const user = req.user;
+	const user = req.user!;
 	if (!user) {
 		return res.status(400).json({
 			success: false,
@@ -25,7 +25,7 @@ const getCurrentUser = async (req: Request, res: Response) => {
 }
 
 const updateImage = async (req: Request, res: Response) => {
-	const { id } = req.user
+	const { id } = req.user!
 
 	const { userId } = req.params
 
@@ -55,7 +55,7 @@ const updateImage = async (req: Request, res: Response) => {
 }
 
 const updateUserInfo = async (req: Request, res: Response) => {
-	const { id } = req.user
+	const { id } = req.user!
 
 	const { userId } = req.params
 

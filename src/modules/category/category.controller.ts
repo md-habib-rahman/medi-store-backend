@@ -22,7 +22,7 @@ const getAllCategory = async (req: Request, res: Response) => {
 const createCategory = async (req: Request, res: Response) => {
 	try {
 
-		const user = req.user
+		const user = req.user!
 		// if (!user) {
 		// 	return res.status(403).json({
 		// 		error: "Unauthorized!",

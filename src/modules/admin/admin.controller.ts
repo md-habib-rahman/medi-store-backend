@@ -6,10 +6,13 @@ import paginationHelper from "../../helper/paginationHelper";
 import { User } from "../../../generated/prisma/client";
 
 const getUsers = async (req: Request, res: Response) => {
+	if (!req.user) {
+		return res.status(401).json({ message: "Unauthorized" })
+	}
 
 	const { page, limit, skip, sortBy, sortOrder } = paginationHelper(req.query)
-	const id = req.query.id as string | undefined
-	const email = req.query.email as string | undefined
+const id = req.query.id as string | undefined; 
+const email = req.query.email as string | undefined;
 
 	// console.log(req.query)
 

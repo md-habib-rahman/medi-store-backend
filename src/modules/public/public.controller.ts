@@ -23,7 +23,7 @@ const getSellerMedicine = async (req: Request, res: Response) => {
 
 		const maxprice = Number(req?.query?.maxprice)
 
-		const sellerId = req?.params.sellerId
+		const sellerId = req?.params?.sellerId as string
 
 		const categoryId = req.query.categoryId as string
 
@@ -47,7 +47,7 @@ const getSellerMedicine = async (req: Request, res: Response) => {
 const getSellerInfo = async (req: Request, res: Response) => {
 
 	try {
-		const { sellerId } = req.params
+		const { sellerId } = req?.params as {sellerId:string}
 		const result = await publicService.getSellerInfo({ sellerId })
 		res.status(200).json({
 			success: true,

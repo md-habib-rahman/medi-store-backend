@@ -2,14 +2,18 @@ import { prisma } from "../../lib/prisma";
 import { Medicines } from "../../../generated/prisma/client";
 import { OrderRequest, OrderWhereCondition } from "../../types/order";
 import { UserRole } from "../../middlewares/auth";
+import { ReviewPayload } from "../../types/review";
 
 
+const getSingleOrder = async (userId: string|undefined, orderId: string|undefined, userRole: string|undefined) => {
 
-const getSingleOrder = async (userId: string, orderId: string, userRole: string) => {
+	if(!userId ||!orderId){
+		return null;
+	}
 
-	const condition = userRole === UserRole.CUSTOMER ? {
-		id: orderId, customerId: userId
-	} : { id: orderId, sellerId: userId }
+	const condition = userRole === UserRole.CUSTOMER 
+	? {id: orderId, customerId: userId} 
+	: { id: orderId, sellerId: userId }
 
 	const order = await prisma.orders.findFirst({
 		where: condition,
@@ -43,7 +47,9 @@ const createOrder = async (
 			},
 		});
 
-		const sellerId = medicines[0].sellerId;
+		if (!medicines || medicines.length === 0) throw new Error("No medicines found")
+			const sellerId = medicines[0]?.sellerId;
+		if(!sellerId) throw new Error("Seller not found")
 
 		const orderItems = items.map((item) => {
 			const medicine = medicines.find(
@@ -96,7 +102,7 @@ const createOrder = async (
 const getOrders = async ({
 	page, limit, skip, sellerId, customerId, sortBy, sortOrder, orderId }: {
 		customerId: string | undefined,
-		page: number, limit: number, skip: number, sellerId?: string, sortBy?: string | undefined, sortOrder?: string | undefined, orderId?: string | undefined
+		page: number, limit: number, skip: number, sellerId: string | undefined, sortBy?: string | undefined, sortOrder?: string | undefined, orderId?: string | undefined
 	}) => {
 	let where: OrderWhereCondition = {}
 	if (sellerId) {
@@ -125,6 +131,13 @@ const getOrders = async ({
 						}
 					}
 				}
+			},
+			review: {
+				select: {
+					id: true,
+					orderId: true,
+					comment: true
+				}
 			}
 		}
 	})
@@ -144,8 +157,27 @@ const getOrders = async ({
 	}
 }
 
+const postReview = async (userId: string, payload: ReviewPayload) => {
+	const ownOrder = await prisma.orders.findFirst({
+		where: {
+			id: payload.orderId,
+			customerId: userId,
+			orderStatus: "DELIVERED"
+		}
+	})
+	if (!ownOrder) {
+		return { success: false, message: "Order Not Found!" }
+	}
+
+	const res = await prisma.reviews.create({
+		data: { ...payload }
+	})
+	return { success: true, res }
+}
+
 export const orderService = {
 	createOrder,
 	getOrders,
-	getSingleOrder
+	getSingleOrder,
+	postReview
 }

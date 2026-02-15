@@ -5,7 +5,7 @@ interface userWhereCondition {
 	id?: string;
 	email?: string;
 }
-const getUsers = async ({ page, limit, skip, sortBy, sortOrder, id, email }: { page: number, limit: number, skip: number, sortBy: string, sortOrder: string, id: string, email: string }) => {
+const getUsers = async ({ page, limit, skip, sortBy, sortOrder, id, email }: { page: number, limit: number, skip: number, sortBy: string, sortOrder: string, id?: string|undefined, email?: string|undefined }) => {
 	let where: userWhereCondition = {}
 
 	if (id) {
