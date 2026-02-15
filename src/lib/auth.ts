@@ -32,13 +32,13 @@ export const auth = betterAuth({
 			maxAge: 5 * 60,
 		},
 	},
-	advanced: {
-		cookiePrefix: "better-auth",
-		useSecureCookies: process.env.NODE_ENV === "production", crossSubDomainCookies: {
-			enabled: false,
-		},
-		disableCSRFCheck: true,
-	},
+	// advanced: {
+	// 	cookiePrefix: "better-auth",
+	// 	useSecureCookies: process.env.NODE_ENV === "production", crossSubDomainCookies: {
+	// 		enabled: false,
+	// 	},
+	// 	disableCSRFCheck: true,
+	// },
 
 	trustedOrigins: [process.env.APP_URL!, process.env.PROD_APP_URL!, "https://medi-store-client-gamma.vercel.app/", "http://localhost:3000/"],
 	user: {
