@@ -15,50 +15,50 @@ const app = express()
 
 const allowedOrigins = [
 
-	process.env.APP_URL || "http://localhost:3000",
+	process.env.APP_URL, "http://localhost:3000",
 
-	process.env.PROD_APP_URL || "https://medi-store-client-gamma.vercel.app"
+	process.env.PROD_APP_URL, "https://medi-store-client-gamma.vercel.app"
 
 ].filter(Boolean);
 
 app.use(
 
-  cors({
+	cors({
 
-    origin: (origin, callback) => {
+		origin: (origin, callback) => {
 
-      if (!origin) return callback(null, true);
-     
-      const isAllowed =
+			if (!origin) return callback(null, true);
 
-        allowedOrigins.includes(origin) ||
+			const isAllowed =
 
-        /^https:\/\/next-blog-client.*\.vercel\.app$/.test(origin) ||
+				allowedOrigins.includes(origin) ||
 
-        /^https:\/\/.*\.vercel\.app$/.test(origin); // Any Vercel deployment
+				/^https:\/\/medi-store-client.*\.vercel\.app$/.test(origin) ||
+
+				/^https:\/\/.*\.vercel\.app$/.test(origin); // Any Vercel deployment
 
 
-      if (isAllowed) {
+			if (isAllowed) {
 
-        callback(null, true);
+				callback(null, true);
 
-      } else {
+			} else {
 
-        callback(new Error(`Origin ${origin} not allowed by CORS`));
+				callback(new Error(`Origin ${origin} not allowed by CORS`));
 
-      }
+			}
 
-    },
+		},
 
-    credentials: true,
+		credentials: true,
 
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+		methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
 
-    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+		allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
 
-    exposedHeaders: ["Set-Cookie"],
+		exposedHeaders: ["Set-Cookie"],
 
-  }),
+	}),
 
 );
 

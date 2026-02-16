@@ -8,7 +8,7 @@ import { jwt } from "better-auth/plugins";
 const transporter = nodemailer.createTransport({
 	host: "smtp.gmail.com",
 	port: 587,
-	secure: false, // Use true for port 465, false for port 587
+	secure: false,
 	auth: {
 		user: process.env.APP_USER,
 		pass: process.env.APP_PASS,
@@ -17,13 +17,14 @@ const transporter = nodemailer.createTransport({
 
 export const auth = betterAuth({
 	database: prismaAdapter(prisma, {
-		provider: "postgresql", 
+		provider: "postgresql",
 	}),
+	trustedOrigins: [process.env.APP_URL!, process.env.PROD_APP_URL!, "https://medi-store-client-gamma.vercel.app", "http://localhost:3000"],
 	plugins: [
 		jwt({
 			jwt: {
-				expirationTime: "7d", 
-						}
+				expirationTime: "7d",
+			}
 		})
 	],
 	session: {
@@ -32,15 +33,15 @@ export const auth = betterAuth({
 			maxAge: 5 * 60,
 		},
 	},
-	// advanced: {
-	// 	cookiePrefix: "better-auth",
-	// 	useSecureCookies: process.env.NODE_ENV === "production", crossSubDomainCookies: {
-	// 		enabled: false,
-	// 	},
-	// 	disableCSRFCheck: true,
-	// },
+	advanced: {
+		cookiePrefix: "better-auth",
+		useSecureCookies: process.env.NODE_ENV === "production", crossSubDomainCookies: {
+			enabled: false,
+		},
+		disableCSRFCheck: true,
+	},
 
-	trustedOrigins: [process.env.APP_URL!, process.env.PROD_APP_URL!, "https://medi-store-client-gamma.vercel.app/", "http://localhost:3000/"],
+
 	user: {
 		additionalFields: {
 			role: {
