@@ -38,7 +38,7 @@ export const auth = betterAuth({
 		useSecureCookies: true,
 		crossSubDomainCookies: {
 			enabled: true,
-			domain: "rumedi-server.mdhabib.me",
+			domain: "vercel.app",
 		},
 		sameSite: "none",
 		disableCSRFCheck: true,
