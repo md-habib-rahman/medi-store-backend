@@ -1,6 +1,5 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-// If your Prisma file is located elsewhere, you can change the path
 import { prisma } from "./prisma";
 import nodemailer from 'nodemailer'
 import { jwt } from "better-auth/plugins";
@@ -19,7 +18,7 @@ export const auth = betterAuth({
 	database: prismaAdapter(prisma, {
 		provider: "postgresql",
 	}),
-	trustedOrigins: [process.env.APP_URL!, process.env.PROD_APP_URL!, "https://medi-store-client-gamma.vercel.app", "http://localhost:3000"],
+	trustedOrigins: ["https://medi-store-client-gamma.vercel.app", "https://rumedi-server.mdhabib.me", "http://localhost:3000"],
 	plugins: [
 		jwt({
 			jwt: {
@@ -30,14 +29,18 @@ export const auth = betterAuth({
 	session: {
 		cookieCache: {
 			enabled: true,
-			maxAge: 5 * 60,
+			maxAge: 3600,
 		},
 	},
+
 	advanced: {
 		cookiePrefix: "better-auth",
-		useSecureCookies: process.env.NODE_ENV === "production", crossSubDomainCookies: {
-			enabled: false,
+		useSecureCookies: true,
+		crossSubDomainCookies: {
+			enabled: true,
+			domain: "rumedi-server.mdhabib.me",
 		},
+		sameSite: "none",
 		disableCSRFCheck: true,
 	},
 

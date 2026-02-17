@@ -13,51 +13,11 @@ import { logger } from './middlewares/logger'
 
 const app = express()
 
-const allowedOrigins = [
-
-	process.env.APP_URL, "http://localhost:3000",
-
-	process.env.PROD_APP_URL, "https://medi-store-client-gamma.vercel.app"
-
-].filter(Boolean);
-
 app.use(
 
 	cors({
-
-		origin: (origin, callback) => {
-
-			if (!origin) return callback(null, true);
-
-			const isAllowed =
-
-				allowedOrigins.includes(origin) ||
-
-				/^https:\/\/medi-store-client.*\.vercel\.app$/.test(origin) ||
-
-				/^https:\/\/.*\.vercel\.app$/.test(origin); // Any Vercel deployment
-
-
-			if (isAllowed) {
-
-				callback(null, true);
-
-			} else {
-
-				callback(new Error(`Origin ${origin} not allowed by CORS`));
-
-			}
-
-		},
-
+		origin: ["http://localhost:3000", "https://medi-store-client-gamma.vercel.app", "https://rumedi-server.mdhabib.me"],
 		credentials: true,
-
-		methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-
-		allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
-
-		exposedHeaders: ["Set-Cookie"],
-
 	}),
 
 );
