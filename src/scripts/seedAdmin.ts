@@ -7,7 +7,8 @@ async function seedAdmin() {
 		const adminData = {
 			name: "ADMIN",
 			email: "admin@rumedi.com",
-			role: UserRole.ADMIN
+			role: UserRole.ADMIN,
+			password: "password1234"
 		}
 		console.log("********* Checking for Existing! *********")
 		const existingUser = await prisma.user.findUnique({
@@ -16,7 +17,7 @@ async function seedAdmin() {
 			}
 		})
 
-		if (existingUser) {
+		if (!existingUser) {
 			throw new Error("********* User already exists! *********")
 		}
 		console.log("********* Creating User! *********")
@@ -29,7 +30,9 @@ async function seedAdmin() {
 			body: JSON.stringify(adminData)
 		})
 
-		console.log("signUpAdmin")
+		if (!signUpAdmin.ok) {
+			throw new Error("********* User creation failed! *********")
+		}
 
 		if (signUpAdmin.ok) {
 			console.log("********* Admin created! *********")
@@ -42,7 +45,7 @@ async function seedAdmin() {
 			})
 			console.log("********* Email verification updated *********")
 		}
-		console.log("********* Success *********")
+		console.log("********* Operation Ends *********")
 	} catch (err) {
 		console.log(err)
 	}
