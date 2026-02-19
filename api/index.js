@@ -186,7 +186,6 @@ var transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
   secure: false,
-  // Use true for port 465, false for port 587
   auth: {
     user: process.env.APP_USER,
     pass: process.env.APP_PASS
@@ -195,17 +194,31 @@ var transporter = nodemailer.createTransport({
 var auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql"
-    // or "mysql", "postgresql", ...etc
   }),
+  trustedOrigins: ["https://medi-store-client-gamma.vercel.app", "https://rumedi-server.mdhabib.me", "http://localhost:3000"],
   plugins: [
     jwt({
       jwt: {
         expirationTime: "7d"
-        // Set your preferred expiry
       }
     })
   ],
-  trustedOrigins: [process.env.APP_URL],
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 3600
+    }
+  },
+  advanced: {
+    cookiePrefix: "better-auth",
+    useSecureCookies: true,
+    crossSubDomainCookies: {
+      enabled: true,
+      domain: "vercel.app"
+    },
+    sameSite: "none",
+    disableCSRFCheck: true
+  },
   user: {
     additionalFields: {
       role: {
@@ -1348,17 +1361,19 @@ function logger(req, _res, next) {
   const ip = req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() || req.socket.remoteAddress;
   const timestamp = (/* @__PURE__ */ new Date()).toISOString();
   console.log(
-    `[${timestamp}] ${req.method} ${req.originalUrl} - IP: ${ip}`
+    `[${timestamp}] origin: ${req.headers.origin} ${req.method} ${req.originalUrl} - IP: ${ip}`
   );
   next();
 }
 
 // src/app.ts
 var app = express8();
-app.use(cors({
-  origin: process.env.APP_URL,
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://medi-store-client-gamma.vercel.app", "https://rumedi-server.mdhabib.me"],
+    credentials: true
+  })
+);
 app.all("/api/auth/*splat", toNodeHandler(auth));
 app.use(express8.json());
 app.use(logger);
