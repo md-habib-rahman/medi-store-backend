@@ -5,6 +5,7 @@ import nodemailer from 'nodemailer'
 import { jwt } from "better-auth/plugins";
 
 const transporter = nodemailer.createTransport({
+
 	host: "smtp.gmail.com",
 	port: 587,
 	secure: false,
@@ -18,6 +19,7 @@ export const auth = betterAuth({
 	database: prismaAdapter(prisma, {
 		provider: "postgresql",
 	}),
+	baseURL: "https://medi-store-backend-rust.vercel.app",
 	trustedOrigins: ["https://medi-store-client-gamma.vercel.app", "https://rumedi-server.mdhabib.me", "http://localhost:3000"],
 	plugins: [
 		jwt({
@@ -36,14 +38,21 @@ export const auth = betterAuth({
 	advanced: {
 		cookiePrefix: "better-auth",
 		useSecureCookies: true,
-		// crossSubDomainCookies: {
-		// 	enabled: true,
-		// 	// domain: "vercel.app",
-		// },
-		
+		crossSubDomainCookies: {
+			enabled: true,
+			// domain: "vercel.app",
+		},
+		cookies: {
+			sessionToken: {
+				attributes: {
+					sameSite: "none",
+					secure: true,
+				}
+			}
+		},
 		disableCSRFCheck: true,
 	},
-	
+
 
 
 	user: {

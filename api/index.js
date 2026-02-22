@@ -213,10 +213,9 @@ var auth = betterAuth({
     cookiePrefix: "better-auth",
     useSecureCookies: true,
     crossSubDomainCookies: {
-      enabled: true,
-      domain: "vercel.app"
+      enabled: false
+      // domain: "vercel.app",
     },
-    sameSite: "none",
     disableCSRFCheck: true
   },
   user: {
@@ -1370,8 +1369,11 @@ function logger(req, _res, next) {
 var app = express8();
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://medi-store-client-gamma.vercel.app", "https://rumedi-server.mdhabib.me"],
-    credentials: true
+    origin: ["https://medi-store-client-gamma.vercel.app", "https://rumedi-server.mdhabib.me"],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+    exposedHeaders: ["Set-Cookie"]
   })
 );
 app.all("/api/auth/*splat", toNodeHandler(auth));
