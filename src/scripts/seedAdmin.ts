@@ -17,8 +17,10 @@ async function seedAdmin() {
 			}
 		})
 
-		if (!existingUser) {
+		if (existingUser) {
 			throw new Error("********* User already exists! *********")
+		} else {
+			console.log("********* User doest not exist! *********")
 		}
 		console.log("********* Creating User! *********")
 
