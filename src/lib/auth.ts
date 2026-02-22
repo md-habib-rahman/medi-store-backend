@@ -36,13 +36,14 @@ export const auth = betterAuth({
 	advanced: {
 		cookiePrefix: "better-auth",
 		useSecureCookies: true,
-		crossSubDomainCookies: {
-			enabled: false,
-			// domain: "vercel.app",
-		},
+		// crossSubDomainCookies: {
+		// 	enabled: true,
+		// 	// domain: "vercel.app",
+		// },
 		
 		disableCSRFCheck: true,
 	},
+	
 
 
 	user: {

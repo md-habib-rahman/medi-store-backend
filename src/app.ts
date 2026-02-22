@@ -16,7 +16,7 @@ const app = express()
 app.use(
 
 	cors({
-		origin: ["http://localhost:3000", "https://medi-store-client-gamma.vercel.app"],
+		origin: ["https://medi-store-client-gamma.vercel.app"],
 		credentials: true,
 		methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
 		allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
